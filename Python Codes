@@ -1,0 +1,246 @@
+import tensorflow
+import keras
+import pandas as pd
+import numpy as np
+from sklearn.metrics import accuracy_score #works
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.model_selection import cross_val_score
+from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.neural_network import MLPClassifier
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Activation, Flatten
+from keras.layers import Conv2D, MaxPooling2D
+from keras.preprocessing.image import ImageDataGenerator
+from keras import regularizers
+from keras.optimizers import SGD
+
+# Reading the file
+trainfile = r'C:\Users\vaibh\OneDrive\Desktop\hands\HandInfov1.1.csv'
+meta_data = pd.read_csv(trainfile)
+
+#Gender training
+gender_data = meta_data[["id","gender","imageName"]]
+gender_data.sample(5)
+
+X_train = gender_data.drop(['gender'],axis=1)
+Y_train = gender_data.gender
+
+#Test_train_split
+x_train,x_test,y_train,y_test = train_test_split(X_train,Y_train,test_size=0.45,random_state=42)
+x_train.sample(5)
+x_train.shape
+
+pip install matplotlib
+pip install Pillow
+pip install scikit-image
+from PIL import Image
+from skimage.transform import rescale, resize, downscale_local_mean
+
+# Reading the images
+
+import pandas as pd
+import matplotlib.pyplot as plt
+%matplotlib inline
+X = []
+for img_name in x_train.imageName:
+  img = plt.imread(r'C:/Users/vaibh/OneDrive/Desktop/hands/Hands/' + img_name)
+  img = resize(img,(200,300),anti_aliasing=True)
+  X.append(img)
+X = np.array(X)
+
+
+#Showing the image
+plt.imshow(X[2000])
+
+# Reading test_data
+Y = []
+for a in x_test.imageName:
+  i = plt.imread(r'C:/Users/vaibh/OneDrive/Desktop/hands/Hands/' + a)
+  i = resize(i,(200,300),anti_aliasing=True)
+  Y.append(i)
+Y = np.array(Y)
+
+#Reading X
+index = 1212
+plt.imshow(X[index])
+print("this image is of ",np.array(y_train)[index],"hand")
+
+# converting the numbers in float
+X = X.astype('float32')
+Y = Y.astype('float32')
+
+X = X/255
+Y = Y/255
+X_train = X
+X_test = Y
+input_shape = (200,300,3)
+y_train = pd.DataFrame(y_train,columns=["gender"])
+y_test = pd.DataFrame(y_test,columns=["gender"])
+y_train.head()
+
+y_data = pd.concat([y_train,y_test],axis=0,keys=[0,1])
+
+from sklearn.preprocessing import LabelEncoder
+lb_make = LabelEncoder()
+y_data['gender'] = lb_make.fit_transform(y_data['gender'])
+
+y_data.head(10)
+y_train = y_data.xs(0)
+y_test = y_data.xs(1)
+
+# Importing the required Keras modules containing model and layers
+from __future__ import print_function
+import keras
+from keras.datasets import cifar10
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Activation, Flatten
+from keras.layers import Conv2D, MaxPooling2D
+from keras.preprocessing.image import ImageDataGenerator
+from keras import regularizers
+from keras.optimizers import SGD
+from keras.utils import to_categorical
+
+y_train = to_categorical(y_train,2)
+y_train.shape
+y_test = to_categorical(y_test)
+
+batch_size = 10
+num_classes = 2
+epochs = 8
+#data_augmentation = True
+num_predictions = 20
+
+model = Sequential()
+model.add(Conv2D(64, (3, 3), padding='same',kernel_initializer='he_uniform',input_shape=input_shape))
+model.add(Activation('relu'))
+model.add(Conv2D(64, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.25))
+
+model.add(Conv2D(32, (3, 3), padding='same',kernel_initializer='he_uniform'))
+model.add(Activation('relu'))
+model.add(Conv2D(32, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Dropout(0.35))
+
+model.add(Flatten())
+model.add(Dense(512))
+model.add(Activation('relu'))
+model.add(Dropout(0.25))
+model.add(Dense(num_classes))
+model.add(Activation('softmax'))
+
+opt = SGD(lr=0.0001,momentum=0.9)
+model.compile(loss="categorical_crossentropy",optimizer=opt,metrics=["accuracy"])
+
+model.fit(X_train, y_train,batch_size=batch_size,epochs=epochs,validation_data=(X_test, y_test),shuffle=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
